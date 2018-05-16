@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
     event_queue = al_create_event_queue();
     
     /* Creo el boton de prueba */
-    testButton = create_button(20, 20, 60, 30, "Prueba", al_map_rgb(0, 0, 0), al_map_rgb(255, 255, 255), al_map_rgb(0, 255, 100), al_map_rgb(0, 255, 255), check);
+    testButton = create_button(20, 20, 60, 30, "Prueba", al_map_rgb(0, 0, 0), al_map_rgb(255, 255, 255), al_map_rgb(0, 255, 100), al_map_rgb(0, 255, 255), al_map_rgb(255, 0, 255), check);
 
     /* Imprimo el boton */
     al_draw_bitmap(testButton.bitmap, testButton.pos.x, testButton.pos.y, 0);
@@ -61,7 +61,13 @@ int main(int argc, char** argv) {
                     hasFinished = true;
                     break;
                 case ALLEGRO_EVENT_MOUSE_AXES:
+                    is_inside_of(&testButton, event.mouse.x, event.mouse.y);
                     
+                    /* Actualizo */
+                    update_button(&testButton);
+                    al_clear_to_color(al_map_rgb(0, 0, 0));
+                    al_draw_bitmap(testButton.bitmap, testButton.pos.x, testButton.pos.y, 0);
+                    al_flip_display();
                     break;
             }
         }
@@ -69,6 +75,7 @@ int main(int argc, char** argv) {
     
     /* Destruyo el display */
     al_destroy_display(display);
+    destroy_button(&testButton);
     
     return (EXIT_SUCCESS);
 }

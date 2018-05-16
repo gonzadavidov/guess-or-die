@@ -65,6 +65,7 @@ typedef struct{
     ALLEGRO_COLOR foregroundColor;
     ALLEGRO_COLOR lineColor;
     ALLEGRO_COLOR pressedColor;
+    ALLEGRO_COLOR focusColor;
     
     /* Bitmap layout */
     ALLEGRO_BITMAP *bitmap;
@@ -79,14 +80,14 @@ typedef struct{
 /***************************/
 
 /* is_inside_of
- * Devuelve 1 o 0 segun si la posicion (x,y) esta ubicada
+ * Actualiza isFocus segun si la posicion (x,y) esta ubicada
  * dentro del boton que se pasa como parametro
  * 
  * x:       Coordenada x de la posicion
  * y:       Coordenada y de la posicion
  * button: Instancia del boton a verificar
  */
-int is_inside_of(BUTTON *button, int x, int y);
+void is_inside_of(BUTTON *button, int x, int y);
 
 /* create_button
  * Crea un boton con sus carateristicas basicas
@@ -102,14 +103,28 @@ int is_inside_of(BUTTON *button, int x, int y);
  * pc:      Color de presion del boton
  * action: Funcion a llamar en evento OnClick
  */
-BUTTON create_button(int x, int y, int width, int height, const char *str, ALLEGRO_COLOR bg, ALLEGRO_COLOR fg, ALLEGRO_COLOR lc, ALLEGRO_COLOR pc, void (*action)(void*));
+BUTTON create_button(int x, int y, int width, int height, const char *str, ALLEGRO_COLOR bg, ALLEGRO_COLOR fg, ALLEGRO_COLOR lc, ALLEGRO_COLOR pc, ALLEGRO_COLOR fc, void (*action)(void*));
+
+/* destroy_button
+ * Destruye el boton, liberando la memoria que lo contenia
+ * 
+ * button: Puntero a la instancia del boton
+ */
+void destroy_button(BUTTON *button);
 
 /* create_button_bitmap
  * Crea el bitmap de un boton segun sus caracteristicas
  * 
  * button: Puntero a la instancia del boton
  */
-static void create_button_bitmap(BUTTON *button);
+void create_button_bitmap(BUTTON *button);
+
+/* update_button
+ * Actualiza el boton, sus estados y atributos
+ * 
+ * button: Puntero a la instancia del boton
+ */
+void update_button(BUTTON *button);
 
 /* window_init
  * Inicializa todos los modulos y parametros necesarios
