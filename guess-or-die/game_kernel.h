@@ -47,6 +47,9 @@ typedef struct{
     /* Cantidad maxima de intentos */
     uint16_t maxTries;
     
+    /* Datos de control */
+    bool alreadySet;
+    
 } SETTINGS;
 
 typedef struct{
@@ -75,7 +78,9 @@ typedef struct{
 /* Prototipos de funciones */
 /***************************/
 
-uint8_t kernel_init_by_mode( SETTINGS )
+/* kernel_init_by_mode 
+ * Inicializa la libreria usando */
+uint8_t kernel_init_by_mode( const char *modeName );
 
 /* kernel_init
  * Inicializa modulos, librerias, parametros necesarios

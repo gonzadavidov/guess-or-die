@@ -17,7 +17,7 @@
 /* Variables del nucleo */
 /************************/
 
-static SETTINGS kernel_cfg;
+static SETTINGS kernel_cfg = {.alreadySet = false};
 static GAME_DATA kernel_data;
 
 /***************************/
@@ -28,7 +28,10 @@ static GAME_DATA kernel_data;
 uint8_t kernel_init(uint32_t minNumber, uint32_t maxNumber, uint16_t timePeriod, uint16_t maxTries){
     
     /* Inicializo semilla para numero random */
-    srand(time(NULL));
+    if( !kernel_cfg.alreadySet ){
+        srand(time(NULL));
+        kernel_cfg.alreadySet = true;
+    }
     
     /* Verifico correcta relacion para rango */
     if( maxNumber <= minNumber ){
