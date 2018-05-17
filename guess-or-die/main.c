@@ -16,6 +16,7 @@
 #include <stdbool.h>
 
 #include "window_manager.h"
+#include "game_kernel.h"
 
 #define EXIT(msg) printf(msg); return -1;
 
@@ -25,57 +26,35 @@ void check(void);
  * 
  */
 int main(int argc, char** argv) {
-    ALLEGRO_DISPLAY *display = NULL;
-    ALLEGRO_EVENT_QUEUE *event_queue = NULL;
-    ALLEGRO_EVENT event;
+    uint32_t number;
+    RESPONSE response;
     
-    BUTTON testButton;
-    
-    bool hasFinished = false;
-    
-    /* Inicializo allegro */
-    window_init();
-    al_install_mouse();
-    
-    /* Creo el display */
-    display = al_create_display(640, 400);
-    
-    /* Creo la cola de eventos */
-    event_queue = al_create_event_queue();
-    
-    /* Creo el boton de prueba */
-    testButton = create_button(20, 20, 60, 30, "Prueba", al_map_rgb(0, 0, 0), al_map_rgb(255, 255, 255), al_map_rgb(0, 255, 100), al_map_rgb(0, 255, 255), al_map_rgb(255, 0, 255), check);
-
-    /* Imprimo el boton */
-    al_draw_bitmap(testButton.bitmap, testButton.pos.x, testButton.pos.y, 0);
-    al_flip_display();
-    
-    /* Le agrego fuentes a la cola de eventos */
-    al_register_event_source(event_queue, al_get_display_event_source(display));
-    al_register_event_source(event_queue, al_get_mouse_event_source());
-    
-    while( !hasFinished ){
-        if( al_get_next_event(event_queue, &event) ){
-            switch( event.type ){
-                case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                    hasFinished = true;
-                    break;
-                case ALLEGRO_EVENT_MOUSE_AXES:
-                    is_inside_of(&testButton, event.mouse.x, event.mouse.y);
-                    
-                    /* Actualizo */
-                    update_button(&testButton);
-                    al_clear_to_color(al_map_rgb(0, 0, 0));
-                    al_draw_bitmap(testButton.bitmap, testButton.pos.x, testButton.pos.y, 0);
-                    al_flip_display();
-                    break;
-            }
+    if( kernel_init(10, 40, 10, 4) ){
+        start_game();
+        
+        do{
+            /* Pido el numero */
+            printf("\nNumero: ");
+            scanf("%d", &number);
+            
+            /* Busco si gano o perdio */
+            response = guess_number(number);
+            
+        }while( !response.isCorrect && time_left() && !response.noMoreTries );
+        
+        if( response.isCorrect ){
+            printf("GANASTE!!\n");
+        }else if( response.noMoreTries ){
+            printf("Te quedaste sin intentos.\n");
+        }else{
+            printf("Perdiste.... :(\n");
         }
+        
+        printf("El numero era: %d\n", get_random_number());
+    }else{
+        printf("No se pudo inicializar.\n");
     }
     
-    /* Destruyo el display */
-    al_destroy_display(display);
-    destroy_button(&testButton);
     
     return (EXIT_SUCCESS);
 }
