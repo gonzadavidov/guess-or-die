@@ -32,6 +32,7 @@
 /**************/
 
 #define MAX_STRING 20
+#define FPS 60.0
 
 /************************/
 /* Estructuras de datos */
@@ -108,6 +109,9 @@ typedef struct{
     /* Cola de eventos */
     ALLEGRO_EVENT_QUEUE *eventQueue;
     ALLEGRO_EVENT event;
+    
+    /* Timer de actualizacion de ventana */
+    ALLEGRO_TIMER *timer;
 
 } WINDOW;
 

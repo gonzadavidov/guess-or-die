@@ -19,6 +19,61 @@
 /* Definicion de funciones */
 /***************************/
 
+/* run_window */
+bool run_window(WINDOW *window){
+    bool close = false;
+    bool refresh = false;
+    uint16_t i;
+    
+    /* Inicializo la ventana */
+    if( !window_init(window) ){
+        return false;
+    }
+    
+    /* Registro fuentes de eventos */
+    al_register_event_source(window->eventQueue, al_get_timer_event_source(window->timer));  
+    al_register_event_source(window->eventQueue, al_get_mouse_event_source());
+    
+    /* Inicio el timer */
+    al_start_timer( window->timer );
+    
+    /* Window loop */
+    while( !close ){
+        
+        /* Busco un nuevo evento */
+        al_get_next_event(window->eventQueue, &window->event);
+        
+        /* Manejo los eventos que van llegando */
+        switch( window->event.type ){
+            case ALLEGRO_EVENT_TIMER:
+                refresh = true;
+                break;
+            case ALLEGRO_EVENT_MOUSE_AXES:
+                /* Actualizo estado de botones */
+                if( window->numberOfButtons ){
+                    for(i = 0;i < window->numberOfButtons;i++){
+                        is_inside_of(&window->buttons[i], window->event.mouse.x, window->event.mouse.y);
+                    }
+                }
+                break;
+        }
+        
+        /* Finalmente actualizo todo */
+        if( refresh && al_is_event_queue_empty(window->eventQueue) ){
+            refresh_window(window);
+            refresh = false;
+        }
+    }
+    
+    /* Paro el timer */
+    al_stop_timer( window->timer );
+    
+    /* Destruyo la ventana */
+    destroy_window(window);
+    
+    return true;
+}
+
 /* refresh_window */
 void refresh_window(WINDOW *window){
     uint16_t i;
@@ -95,6 +150,9 @@ void destroy_window(WINDOW *window){
     /* Destruyo la cola de eventos */
     al_destroy_event_queue(window->eventQueue);
     
+    /* Destruyo el timer */
+    al_destroy_timer(window->timer);
+    
     /* Destruyo todos los botones */
     if( window->numberOfButtons ){
         for(i = 0;i < window->numberOfButtons;i++){
@@ -128,6 +186,12 @@ bool window_init(WINDOW *window){
     /* Creo la cola de eventos */
     window->eventQueue = al_create_event_queue();
     if( window->eventQueue == NULL ){
+        return false;
+    }
+    
+    /* Creo el timer */
+    window->timer = al_create_timer(1.0 / FPS);
+    if( window->timer == NULL ){
         return false;
     }
     
