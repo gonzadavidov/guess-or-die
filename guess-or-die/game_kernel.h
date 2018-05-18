@@ -19,6 +19,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <strings.h>
 
 /**************/
 /* Constantes */
@@ -29,11 +30,6 @@
 /************************/
 /* Estructuras de datos */
 /************************/
-
-typedef struct{
-    uint8_t name[MAX_STRING];
-    SETTINGS cfg;
-} GAME_MODE;
 
 typedef struct{
     
@@ -47,10 +43,12 @@ typedef struct{
     /* Cantidad maxima de intentos */
     uint16_t maxTries;
     
-    /* Datos de control */
-    bool alreadySet;
-    
 } SETTINGS;
+
+typedef struct{
+    uint8_t name[MAX_STRING];
+    SETTINGS cfg;
+} GAME_MODE;
 
 typedef struct{
     
@@ -78,8 +76,24 @@ typedef struct{
 /* Prototipos de funciones */
 /***************************/
 
+/* mode_exists
+ * Busca el modo segun el nombre
+ * Si existe devuelve un puntero a la instancia, si no devuelve NULL
+ *
+ * modeName: Nombre del modo a buscar
+ */
+static GAME_MODE* mode_exists( char *modeName );
+
+/* number_of_modes 
+ * Devuelve la cantidad de modos existentes
+ */
+static uint16_t number_of_modes(void);
+
 /* kernel_init_by_mode 
- * Inicializa la libreria usando */
+ * Inicializa la libreria usando el nombre del modo de juego
+ *
+ * modeName: Puntero al string para inicializar
+ */
 uint8_t kernel_init_by_mode( const char *modeName );
 
 /* kernel_init

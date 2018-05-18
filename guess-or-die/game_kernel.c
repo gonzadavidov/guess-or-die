@@ -17,20 +17,80 @@
 /* Variables del nucleo */
 /************************/
 
-static SETTINGS kernel_cfg = {.alreadySet = false};
+bool alreadyInit = false;
+
+static SETTINGS kernel_cfg;
+
 static GAME_DATA kernel_data;
+
+static GAME_MODE modes_available[] = {
+    {.name = "NOMBRE_DEL_MODO", .cfg.minNumber = 10, .cfg.maxNumber = 20, .cfg.timePeriod = 10, .cfg.maxTries = 5}
+};
 
 /***************************/
 /* Definicion de funciones */
 /***************************/
 
+/* kernel_init_by_mode */
+uint8_t kernel_init_by_mode( const char *modeName ){
+    GAME_MODE *mode;
+    bool success;
+    
+    /* Busco el modo pedido */
+    mode = mode_exists(modeName);
+    
+    /* Verifico que lo haya encontrado */
+    if( mode != NULL ){
+        success = kernel_init( mode->cfg.minNumber, mode->cfg.maxNumber, mode->cfg.timePeriod, mode->cfg.maxTries);
+        return success;
+    }else{
+        return false;
+    }
+}
+
+/* mode_exists */
+static GAME_MODE* mode_exists( char *modeName ){
+    GAME_MODE *modes = modes_available;
+    uint16_t i, numberOfModes;
+    bool found = false;
+    
+    /* Busco cantidad de modos */
+    numberOfModes = number_of_modes();
+    
+    /* Itero por los modos */
+    for(i = 0;i < numberOfModes && !found;i++){
+        /* Comparo el que busco con el nombre del modo */
+        if( !strcmp(modeName, modes->name) ){
+            found = true;
+        }else{
+            modes++;
+        }
+    }
+    
+    /* Devuelvo el resultado */
+    if( found ){
+        return modes;
+    }else{
+        return NULL;
+    }
+}
+
+/* number_of_modes */
+static uint16_t number_of_modes(void){
+    uint16_t numberOfModes;
+    
+    numberOfModes = sizeof(modes_available) / sizeof(GAME_MODE);
+    
+    return numberOfModes;
+}
+
 /* kernel_init */
 uint8_t kernel_init(uint32_t minNumber, uint32_t maxNumber, uint16_t timePeriod, uint16_t maxTries){
     
     /* Inicializo semilla para numero random */
-    if( !kernel_cfg.alreadySet ){
+    if( !alreadyInit ){
         srand(time(NULL));
-        kernel_cfg.alreadySet = true;
+        alreadyInit = true;
     }
     
     /* Verifico correcta relacion para rango */
