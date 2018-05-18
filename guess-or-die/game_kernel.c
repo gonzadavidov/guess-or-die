@@ -31,6 +31,22 @@ static GAME_MODE modes_available[] = {
 /* Definicion de funciones */
 /***************************/
 
+/* get_list_of_modes */
+void get_list_of_modes(STRING **modes){
+    GAME_MODE *modesPointer = modes_available;
+    uint16_t numberOfModes, i;
+    
+    /* Obtengo cantidad de modos */
+    numberOfModes = number_of_modes();
+    
+    /* Itero y busco modo por modo */
+    for(i = 0;i < numberOfModes;i++){
+        strcpy(*modes, modesPointer->name);
+        modes++;
+        modesPointer++;
+    }
+}
+
 /* kernel_init_by_mode */
 uint8_t kernel_init_by_mode( const char *modeName ){
     GAME_MODE *mode;
