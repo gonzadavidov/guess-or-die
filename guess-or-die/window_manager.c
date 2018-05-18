@@ -19,6 +19,12 @@
 /* Definicion de funciones */
 /***************************/
 
+/* set_button_action */
+void set_button_action(BUTTON *button, void (*action)(void*)){
+    button->onClick = action;
+}
+
+/* is_inside_of */
 void is_inside_of(BUTTON *button, int x, int y){
     if( button->pos.x < x && x < (button->pos.x + button->width) && button->pos.y < y && y < (button->pos.y + button->height) ){
         button->isFocus = 1;        
@@ -27,10 +33,11 @@ void is_inside_of(BUTTON *button, int x, int y){
     }
 }
 
-int window_init(){
+/* window_init */
+bool window_init(){
     /* Inicializo libreria general de Allegro */
     if( !al_init() ){
-        return 1;
+        return false;
     }
     
     /* Inicializo addons de Allegro */
@@ -38,15 +45,19 @@ int window_init(){
     al_init_primitives_addon();
     al_init_ttf_addon();
     
+    return true;
 }
 
+/* destroy_button */
 void destroy_button(BUTTON *button){
     al_destroy_bitmap(button->bitmap);
 }
 
-BUTTON create_button(int x, int y, int width, int height, const char *str, ALLEGRO_COLOR bg, ALLEGRO_COLOR fg, ALLEGRO_COLOR lc, ALLEGRO_COLOR pc, ALLEGRO_COLOR fc, void (*action)(void*)){
+/* create_button */
+BUTTON create_button(uint16_t id, uint8_t x, uint8_t y, uint16_t width, uint16_t height, const char *str, ALLEGRO_COLOR bg, ALLEGRO_COLOR fg, ALLEGRO_COLOR lc, ALLEGRO_COLOR pc, ALLEGRO_COLOR fc){
     /* Inicializo la instancia del boton */
     BUTTON boton = {
+        .id = id,
         .pos.x = x,
         .pos.y = y,
         .width = width,
@@ -63,15 +74,13 @@ BUTTON create_button(int x, int y, int width, int height, const char *str, ALLEG
     /* Inicializo el texto del boton */
     strcpy(boton.text, str);
     
-    /* Inicializo funcion */
-    boton.on_click = action;
-    
     /* Inicializo el bitmap del boton */    
     create_button_bitmap(&boton);
     
     return boton;
 }
 
+/* update_button */
 void update_button(BUTTON *button){
     ALLEGRO_DISPLAY *display;
     ALLEGRO_FONT *font;
@@ -104,6 +113,7 @@ void update_button(BUTTON *button){
     al_set_target_backbuffer(display);
 }
 
+/* create_button_bitmap */
 void create_button_bitmap(BUTTON *button){
     ALLEGRO_DISPLAY *display;
     ALLEGRO_FONT *font;
