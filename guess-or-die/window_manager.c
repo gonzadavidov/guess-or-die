@@ -20,8 +20,25 @@
 /***************************/
 
 /* add_button */
-bool add_button(WINDOW *window, uint8_t x, uint8_t y, uint16_t width, uint16_t height, const char *str, ALLEGRO_COLOR bg, ALLEGRO_COLOR fg, ALLEGRO_COLOR lc, ALLEGRO_COLOR pc, ALLEGRO_COLOR fc);
-
+bool add_button(WINDOW *window, uint8_t x, uint8_t y, uint16_t width, uint16_t height, const char *str, ALLEGRO_COLOR bg, ALLEGRO_COLOR fg, ALLEGRO_COLOR lc, ALLEGRO_COLOR pc, ALLEGRO_COLOR fc){
+    
+    /* Aumento contador para numero de botones */
+    window->numberOfButtons++;
+    
+    /* Agrego un bloque mas de memoria a la lista de botones */
+    window->buttons = realloc(window->buttons, sizeof(BUTTON) * (window->numberOfButtons+1));
+    if( window->buttons == NULL ){
+        return false;
+    }
+    
+    /* Voy al final y creo un boton */
+    window->buttons[window->nextButtonId] = create_button(window->nextButtonId, x, y, width, height, str, bg, fg, lc, pc, fc);
+    
+    /* Aumento contador para ID */
+    window->nextButtonId++;
+    
+    return true;
+}
 
 /* add_button_action_by_text */
 bool add_button_action_by_text(WINDOW *window, const char *text, void (*action)(void*)){
@@ -92,6 +109,12 @@ bool window_init(WINDOW *window){
     /* Inicializo parametros generales */
     window->numberOfButtons = 0;
     window->nextButtonId = 0;
+    
+    /* Reservo memoria inicial para lista de botones */
+    window->buttons = malloc( sizeof(BUTTON) );
+    if( window->buttons == NULL ){
+        return false;
+    }
     
     /* Paso el control a la nueva ventana */
     al_set_target_backbuffer(window->display);
