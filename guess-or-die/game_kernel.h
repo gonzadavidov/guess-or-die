@@ -31,6 +31,8 @@
 /* Estructuras de datos */
 /************************/
 
+typedef char STRING[MAX_STRING];
+
 typedef struct{
     
     /* Rango del numero aleatorio */
@@ -46,7 +48,7 @@ typedef struct{
 } SETTINGS;
 
 typedef struct{
-    uint8_t name[MAX_STRING];
+    STRING name;
     SETTINGS cfg;
 } GAME_MODE;
 
@@ -75,6 +77,12 @@ typedef struct{
 /***************************/
 /* Prototipos de funciones */
 /***************************/
+
+/* get_list_of_modes
+ * Busca y guarda la lista de nombres de los modos disponibles
+ * 
+ * modes: Puntero al array de strings para guardar nombres*/
+void get_list_of_modes(STRING **modes);
 
 /* mode_exists
  * Busca el modo segun el nombre
