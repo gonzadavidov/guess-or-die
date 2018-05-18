@@ -94,6 +94,7 @@ typedef struct{
     /* Parametros de la ventana */
     uint16_t width;
     uint16_t height;
+    ALLEGRO_COLOR backgroundColor;
     
     /* Displays de la ventana */
     ALLEGRO_DISPLAY *display;
@@ -114,10 +115,46 @@ typedef struct{
 /* Prototipos de funciones */
 /***************************/
 
-void run_window(WINDOW *window);
+/* run_window
+ * Funcion de uso principal.
+ * Luego de configurar COMO es la ventana, solamente
+ * hay que llamar a esta funcion para que pase el control
+ * a la nueva ventana y vuelve cuando termino
+ *
+ * window: Puntero a la ventana
+ */
+bool run_window(WINDOW *window);
 
+/* refresh_window 
+ * Actualiza el contenido en el display en pantalla
+ *
+ * window: Puntero a la ventana a actualizar
+ */
+void refresh_window(WINDOW *window);
+
+/* add_button
+ * Agrega un boton a una ventana
+ *
+ * window: Puntero a la ventana
+ * x:       Coordenada x de la posicion del boton
+ * y:       Coordenada y de la posicion del boton
+ * width:   Ancho del boton
+ * height:  Alto del boton
+ * str:     Texto del boton
+ * bg:      Color de fondo en el boton
+ * fg:      Color del texto en el boton
+ * lc:      Color de la linea borde del boton
+ * pc:      Color de presion del boton
+ */
 bool add_button(WINDOW *window, uint8_t x, uint8_t y, uint16_t width, uint16_t height, const char *str, ALLEGRO_COLOR bg, ALLEGRO_COLOR fg, ALLEGRO_COLOR lc, ALLEGRO_COLOR pc, ALLEGRO_COLOR fc);
 
+/* add_button_action_by_text
+ * Agrega la accion on click de un boton segun su label
+ *
+ * window: Puntero a la ventana donde pertenece el boton
+ * text: Puntero al label a buscar
+ * action: Puntero a la funcion para agregar
+ */
 bool add_button_action_by_text(WINDOW *window, const char *text, void (*action)(void*));
 
 /* destroy_window
@@ -132,7 +169,7 @@ void destroy_window(WINDOW *window);
  * Inicializa aspectos principales de la ventana,
  * es llamada automaticamente por el run_window
  * El usuario debe unicamente haber creado una instancia
- * con los parametros width y height definidos
+ * con los parametros definidos
  * 
  * window: Puntero a la ventana a inicializar
  */
@@ -168,7 +205,6 @@ void set_button_action(BUTTON *button, void (*action)(void*));
  * fg:      Color del texto en el boton
  * lc:      Color de la linea borde del boton
  * pc:      Color de presion del boton
- * action: Funcion a llamar en evento OnClick
  */
 BUTTON create_button(uint16_t id, uint8_t x, uint8_t y, uint16_t width, uint16_t height, const char *str, ALLEGRO_COLOR bg, ALLEGRO_COLOR fg, ALLEGRO_COLOR lc, ALLEGRO_COLOR pc, ALLEGRO_COLOR fc);
  

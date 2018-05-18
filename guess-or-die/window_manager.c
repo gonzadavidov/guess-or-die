@@ -19,6 +19,31 @@
 /* Definicion de funciones */
 /***************************/
 
+/* refresh_window */
+void refresh_window(WINDOW *window){
+    uint16_t i;
+    
+    /* Actualizo los botones */
+    if( window->numberOfButtons ){
+        for(i = 0;i < window->numberOfButtons;i++){
+            update_button(&window->buttons[i]);
+        }
+    }
+    
+    /* Limpio el display */
+    al_clear_to_color(window->backgroundColor);
+    
+    /* Imprimo cada boton */
+    if( window->numberOfButtons ){
+        for(i = 0;i < window->numberOfButtons;i++){
+            al_draw_bitmap( window->buttons[i].bitmap, window->buttons[i].pos.x, window->buttons[i].pos.y, 0);
+        }
+    }
+    
+    /* Mando backbuffer a pantalla */
+    al_flip_display();
+}
+
 /* add_button */
 bool add_button(WINDOW *window, uint8_t x, uint8_t y, uint16_t width, uint16_t height, const char *str, ALLEGRO_COLOR bg, ALLEGRO_COLOR fg, ALLEGRO_COLOR lc, ALLEGRO_COLOR pc, ALLEGRO_COLOR fc){
     
