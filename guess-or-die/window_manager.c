@@ -64,11 +64,11 @@ bool run_window(WINDOW *window){
             case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
                 if( window->numberOfButtons ){
                     for(i = 0;i < window->numberOfButtons;i++){
-                        if( is_inside_of(&window->buttons[i], window->event.mouse.x, window->event.mouse.y) && window->buttons[i].isPressed ){
+                        if( window->buttons[i].isPressed ){
                             window->buttons[i].isPressed = false;
-                        }
-                        if(window->buttons[i].isClickSet ){
-                            window->buttons[i].onClick(NULL);
+                            if(window->buttons[i].isClickSet ){
+                                window->buttons[i].onClick(NULL);
+                            }
                         }
                     }
                 }
@@ -186,7 +186,14 @@ void destroy_window(WINDOW *window){
 }
 
 /* window_init */
-bool window_init(WINDOW *window){
+bool window_init(WINDOW *window, uint16_t width, uint16_t height, ALLEGRO_COLOR backgroundColor){
+    
+    /* Inicializo parametros generales */
+    window->numberOfButtons = 0;
+    window->nextButtonId = 0;
+    window->width = width;
+    window->height = height;
+    window->backgroundColor = backgroundColor;
     
     /* Guardo el backbuffer del parent */
     window->parentDisplay = al_get_current_display();
@@ -214,10 +221,6 @@ bool window_init(WINDOW *window){
         al_destroy_event_queue(window->eventQueue);
         return false;
     }
-    
-    /* Inicializo parametros generales */
-    window->numberOfButtons = 0;
-    window->nextButtonId = 0;
     
     /* Reservo memoria inicial para lista de botones */
     window->buttons = malloc( sizeof(BUTTON) );

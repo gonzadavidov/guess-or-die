@@ -171,14 +171,15 @@ bool add_button_action_by_text(WINDOW *window, const char *text, void (*action)(
 void destroy_window(WINDOW *window);
 
 /* window_init 
- * Inicializa aspectos principales de la ventana,
- * es llamada automaticamente por el run_window
- * El usuario debe unicamente haber creado una instancia
- * con los parametros definidos
+ * Inicializa la ventana, debe ser llamada antes de
+ * invocar a run_window
  * 
  * window: Puntero a la ventana a inicializar
+ * width: Ancho de la ventana
+ * height: Alto de la ventana
+ * backgroundColor: Color de fondo de la ventana
  */
-bool window_init(WINDOW *window);
+bool window_init(WINDOW *window, uint16_t width, uint16_t height, ALLEGRO_COLOR backgroundColor);
 
 /* is_inside_of
  * Devuelve segun si la posicion (x,y) esta ubicada
