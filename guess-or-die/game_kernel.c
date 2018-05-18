@@ -24,7 +24,9 @@ static SETTINGS kernel_cfg;
 static GAME_DATA kernel_data;
 
 static GAME_MODE modes_available[] = {
-    {.name = "NOMBRE_DEL_MODO", .cfg.minNumber = 10, .cfg.maxNumber = 20, .cfg.timePeriod = 10, .cfg.maxTries = 5}
+    {.name = "NOMBRE_DEL_MODO", .cfg.minNumber = 10, .cfg.maxNumber = 20, .cfg.timePeriod = 10, .cfg.maxTries = 5},
+    {.name = "CAGON"},
+    {.name = "VALIENTE"}
 };
 
 /***************************/
@@ -32,7 +34,7 @@ static GAME_MODE modes_available[] = {
 /***************************/
 
 /* get_list_of_modes */
-void get_list_of_modes(STRING **modes){
+void get_list_of_modes(STRING *modes){
     GAME_MODE *modesPointer = modes_available;
     uint16_t numberOfModes, i;
     
@@ -41,7 +43,7 @@ void get_list_of_modes(STRING **modes){
     
     /* Itero y busco modo por modo */
     for(i = 0;i < numberOfModes;i++){
-        strcpy(*modes, modesPointer->name);
+        strcpy(modes, modesPointer->name);
         modes++;
         modesPointer++;
     }
@@ -92,7 +94,7 @@ static GAME_MODE* mode_exists( char *modeName ){
 }
 
 /* number_of_modes */
-static uint16_t number_of_modes(void){
+uint16_t number_of_modes(void){
     uint16_t numberOfModes;
     
     numberOfModes = sizeof(modes_available) / sizeof(GAME_MODE);

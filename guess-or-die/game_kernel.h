@@ -82,7 +82,7 @@ typedef struct{
  * Busca y guarda la lista de nombres de los modos disponibles
  * 
  * modes: Puntero al array de strings para guardar nombres*/
-void get_list_of_modes(STRING **modes);
+void get_list_of_modes(STRING *modes);
 
 /* mode_exists
  * Busca el modo segun el nombre
@@ -95,7 +95,7 @@ static GAME_MODE* mode_exists( char *modeName );
 /* number_of_modes 
  * Devuelve la cantidad de modos existentes
  */
-static uint16_t number_of_modes(void);
+uint16_t number_of_modes(void);
 
 /* kernel_init_by_mode 
  * Inicializa la libreria usando el nombre del modo de juego
