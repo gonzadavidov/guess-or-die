@@ -19,6 +19,62 @@
 /* Definicion de funciones */
 /***************************/
 
+/* destroy_window */
+void destroy_window(WINDOW *window){
+    uint16_t i;
+    
+    /* Destruyo el backbuffer */
+    al_destroy_display(window->display);
+    
+    /* Destruyo la cola de eventos */
+    al_destroy_event_queue(window->eventQueue);
+    
+    /* Destruyo todos los botones */
+    if( window->numberOfButtons ){
+        for(i = 0;i < window->numberOfButtons;i++){
+            destroy_button( window->buttons[i] );
+        }
+    }
+    
+    /* Libero memoria de los botones */
+    free(window->buttons);
+    
+    /* Devuelvo el control al parent */
+    al_set_target_backbuffer(window->parentDisplay);
+    
+}
+
+/* window_init */
+bool window_init(WINDOW *window){
+    
+    /* Guardo el backbuffer del parent */
+    window->parentDisplay = al_get_current_display();
+    if( window->parentDisplay == NULL ){
+        return false;
+    }
+    
+    /* Creo el backbuffer de esta ventana */
+    window->display = al_create_display(window->width, window->height);
+    if( window->display == NULL ){
+        return false;
+    }
+    
+    /* Creo la cola de eventos */
+    window->eventQueue = al_create_event_queue();
+    if( window->eventQueue == NULL ){
+        return false;
+    }
+    
+    /* Inicializo parametros generales */
+    window->numberOfButtons = 0;
+    window->nextButtonId = 0;
+    
+    /* Paso el control a la nueva ventana */
+    al_set_target_backbuffer(window->display);
+    
+    return true;
+}
+
 /* set_button_action */
 void set_button_action(BUTTON *button, void (*action)(void*)){
     button->onClick = action;
@@ -33,8 +89,8 @@ void is_inside_of(BUTTON *button, int x, int y){
     }
 }
 
-/* window_init */
-bool window_init(){
+/* manager_init */
+bool manager_init(){
     /* Inicializo libreria general de Allegro */
     if( !al_init() ){
         return false;
@@ -44,6 +100,11 @@ bool window_init(){
     al_init_font_addon();
     al_init_primitives_addon();
     al_init_ttf_addon();
+    
+    /* Instala el mouse */
+    if( !al_install_mouse() ){
+        return false;
+    }
     
     return true;
 }

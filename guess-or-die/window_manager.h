@@ -90,6 +90,10 @@ typedef struct{
  */
 typedef struct{
     
+    /* Parametros de la ventana */
+    uint16_t width;
+    uint16_t height;
+    
     /* Displays de la ventana */
     ALLEGRO_DISPLAY *display;
     ALLEGRO_DISPLAY *parentDisplay;
@@ -100,7 +104,7 @@ typedef struct{
     uint16_t nextButtonId;
     
     /* Cola de eventos */
-    ALLEGRO_EVENT_QUEUE *event_queue;
+    ALLEGRO_EVENT_QUEUE *eventQueue;
     ALLEGRO_EVENT event;
 
 } WINDOW;
@@ -111,13 +115,27 @@ typedef struct{
 
 void run_window(WINDOW *window);
 
-bool window_init(WINDOW *window);
-
-void destroy_window(WINDOW *window);
-
 bool add_button(WINDOW *window, uint8_t x, uint8_t y, uint16_t width, uint16_t height, const char *str, ALLEGRO_COLOR bg, ALLEGRO_COLOR fg, ALLEGRO_COLOR lc, ALLEGRO_COLOR pc, ALLEGRO_COLOR fc);
 
 bool add_button_action_by_text(WINDOW *window, const char *text, void (*action)(void*));
+
+/* destroy_window
+ * Libera la memoria ocupada por las partes integrantes
+ * de esta ventana
+ * 
+ * window: Puntero a la ventana 
+ */
+void destroy_window(WINDOW *window);
+
+/* window_init 
+ * Inicializa aspectos principales de la ventana,
+ * es llamada automaticamente por el run_window
+ * El usuario debe unicamente haber creado una instancia
+ * con los parametros width y height definidos
+ * 
+ * window: Puntero a la ventana a inicializar
+ */
+bool window_init(WINDOW *window);
 
 /* is_inside_of
  * Actualiza isFocus segun si la posicion (x,y) esta ubicada
@@ -174,10 +192,10 @@ void create_button_bitmap(BUTTON *button);
  */
 void update_button(BUTTON *button);
 
-/* window_init
+/* manager_init
  * Inicializa todos los modulos y parametros necesarios
  * para el correcto funcionamiento de la libreria
  */
-bool window_init(void);
+bool manager_init(void);
         
 #endif /* WINDOW_MANAGER_H */
