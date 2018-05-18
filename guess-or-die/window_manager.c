@@ -64,8 +64,12 @@ bool run_window(WINDOW *window){
             case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
                 if( window->numberOfButtons ){
                     for(i = 0;i < window->numberOfButtons;i++){
-                        window->buttons[i].isPressed = !is_inside_of(&window->buttons[i], window->event.mouse.x, window->event.mouse.y);
-                        window->buttons[i].onClick(NULL);
+                        if( is_inside_of(&window->buttons[i], window->event.mouse.x, window->event.mouse.y) && window->buttons[i].isPressed ){
+                            window->buttons[i].isPressed = false;
+                        }
+                        if(window->buttons[i].isClickSet ){
+                            window->buttons[i].onClick(NULL);
+                        }
                     }
                 }
                 break;
@@ -233,6 +237,9 @@ bool window_init(WINDOW *window){
 /* set_button_action */
 void set_button_action(BUTTON *button, void (*action)(void*)){
     button->onClick = action;
+    if( !button->isClickSet ){
+        button->isClickSet = true;
+    }
 }
 
 /* is_inside_of */
@@ -284,7 +291,8 @@ BUTTON create_button(uint16_t id, uint8_t x, uint8_t y, uint16_t width, uint16_t
         .pressedColor = pc,
         .focusColor = fc,
         .isPressed = 0,
-        .isFocus = 0
+        .isFocus = 0,
+        .isClickSet = false
     };
     
     /* Inicializo el texto del boton */

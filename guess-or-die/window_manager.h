@@ -68,9 +68,9 @@ typedef struct{
     
     /* Functionality options */
     uint16_t status;
-    uint16_t isPressed;
-    uint16_t isFocus;
-    uint16_t enableHold;
+    bool isPressed;
+    bool isFocus;
+    bool enableHold;
     
     /* Color options */
     ALLEGRO_COLOR backgroundColor;
@@ -83,6 +83,7 @@ typedef struct{
     ALLEGRO_BITMAP *bitmap;
     
     /* OnClick action */
+    bool isClickSet;
     void (*onClick)(void*);
     
 } BUTTON;
