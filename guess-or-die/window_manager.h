@@ -180,14 +180,14 @@ void destroy_window(WINDOW *window);
 bool window_init(WINDOW *window);
 
 /* is_inside_of
- * Actualiza isFocus segun si la posicion (x,y) esta ubicada
+ * Devuelve segun si la posicion (x,y) esta ubicada
  * dentro del boton que se pasa como parametro
  * 
  * x:       Coordenada x de la posicion
  * y:       Coordenada y de la posicion
  * button: Instancia del boton a verificar
  */
-void is_inside_of(BUTTON *button, int x, int y);
+bool is_inside_of(BUTTON *button, int x, int y);
 
 /* set_button_action
  * Establece la accion a ejecutar por un boton dado

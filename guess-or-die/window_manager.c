@@ -48,10 +48,24 @@ bool run_window(WINDOW *window){
                 refresh = true;
                 break;
             case ALLEGRO_EVENT_MOUSE_AXES:
-                /* Actualizo estado de botones */
                 if( window->numberOfButtons ){
                     for(i = 0;i < window->numberOfButtons;i++){
-                        is_inside_of(&window->buttons[i], window->event.mouse.x, window->event.mouse.y);
+                        window->buttons[i].isFocus = is_inside_of(&window->buttons[i], window->event.mouse.x, window->event.mouse.y);
+                    }
+                }
+                break;
+            case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+                if( window->numberOfButtons ){
+                    for(i = 0;i < window->numberOfButtons;i++){
+                        window->buttons[i].isPressed = is_inside_of(&window->buttons[i], window->event.mouse.x, window->event.mouse.y);
+                    }
+                }
+                break;
+            case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
+                if( window->numberOfButtons ){
+                    for(i = 0;i < window->numberOfButtons;i++){
+                        window->buttons[i].isPressed = !is_inside_of(&window->buttons[i], window->event.mouse.x, window->event.mouse.y);
+                        window->buttons[i].onClick(NULL);
                     }
                 }
                 break;
@@ -222,11 +236,11 @@ void set_button_action(BUTTON *button, void (*action)(void*)){
 }
 
 /* is_inside_of */
-void is_inside_of(BUTTON *button, int x, int y){
+bool is_inside_of(BUTTON *button, int x, int y){
     if( button->pos.x < x && x < (button->pos.x + button->width) && button->pos.y < y && y < (button->pos.y + button->height) ){
-        button->isFocus = 1;        
+        return true;      
     }else{
-        button->isFocus = 0; 
+        return false;
     }
 }
 
@@ -294,9 +308,9 @@ void update_button(BUTTON *button){
     al_set_target_bitmap(button->bitmap);
     
     /* Fondo del bitmap */
-    if( button->isFocus ){
+    if( button->isPressed ){
         al_clear_to_color(button->focusColor);        
-    }else if( button->isPressed ){
+    }else if( button->isFocus ){
         al_clear_to_color(button->pressedColor);      
     }else{
         al_clear_to_color(button->backgroundColor);
