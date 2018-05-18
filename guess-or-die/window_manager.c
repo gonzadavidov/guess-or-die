@@ -19,6 +19,30 @@
 /* Definicion de funciones */
 /***************************/
 
+/* add_button */
+bool add_button(WINDOW *window, uint8_t x, uint8_t y, uint16_t width, uint16_t height, const char *str, ALLEGRO_COLOR bg, ALLEGRO_COLOR fg, ALLEGRO_COLOR lc, ALLEGRO_COLOR pc, ALLEGRO_COLOR fc);
+
+
+/* add_button_action_by_text */
+bool add_button_action_by_text(WINDOW *window, const char *text, void (*action)(void*)){
+    uint16_t i;
+    
+    /* Verifico que hayan botones */
+    if( window->numberOfButtons ){
+        /* Itero por todos los botones de window */
+        for(i = 0;i < window->numberOfButtons;i++){
+            /* Me fijo cual tiene ese nombre */
+            if( !strcmp(text, window->buttons[i].text) ){
+                /* Le establezco la accion */
+                window->buttons[i].onClick = action;
+                return true;
+            }
+        }
+    }
+    
+    return false;
+}
+
 /* destroy_window */
 void destroy_window(WINDOW *window){
     uint16_t i;
