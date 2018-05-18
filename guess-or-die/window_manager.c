@@ -25,14 +25,10 @@ bool run_window(WINDOW *window){
     bool refresh = false;
     uint16_t i;
     
-    /* Inicializo la ventana */
-    if( !window_init(window) ){
-        return false;
-    }
-    
     /* Registro fuentes de eventos */
     al_register_event_source(window->eventQueue, al_get_timer_event_source(window->timer));  
     al_register_event_source(window->eventQueue, al_get_mouse_event_source());
+    al_register_event_source(window->eventQueue, al_get_display_event_source(window->display));
     
     /* Inicio el timer */
     al_start_timer( window->timer );
@@ -45,6 +41,9 @@ bool run_window(WINDOW *window){
         
         /* Manejo los eventos que van llegando */
         switch( window->event.type ){
+            case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                close = true;
+                break;
             case ALLEGRO_EVENT_TIMER:
                 refresh = true;
                 break;
@@ -156,7 +155,7 @@ void destroy_window(WINDOW *window){
     /* Destruyo todos los botones */
     if( window->numberOfButtons ){
         for(i = 0;i < window->numberOfButtons;i++){
-            destroy_button( window->buttons[i] );
+            destroy_button( &window->buttons[i] );
         }
     }
     
@@ -186,12 +185,15 @@ bool window_init(WINDOW *window){
     /* Creo la cola de eventos */
     window->eventQueue = al_create_event_queue();
     if( window->eventQueue == NULL ){
+        al_destroy_display(window->display);
         return false;
     }
     
     /* Creo el timer */
     window->timer = al_create_timer(1.0 / FPS);
     if( window->timer == NULL ){
+        al_destroy_display(window->display);
+        al_destroy_event_queue(window->eventQueue);
         return false;
     }
     
@@ -202,6 +204,9 @@ bool window_init(WINDOW *window){
     /* Reservo memoria inicial para lista de botones */
     window->buttons = malloc( sizeof(BUTTON) );
     if( window->buttons == NULL ){
+        al_destroy_display(window->display);
+        al_destroy_event_queue(window->eventQueue);
+        al_destroy_timer(window->timer);
         return false;
     }
     
@@ -319,7 +324,7 @@ void create_button_bitmap(BUTTON *button){
     display = al_get_current_display();
     
     /* Creo el bitmap del boton */
-    button->bitmap = al_create_bitmap(button->width, button->height);
+    button->bitmap = al_create_bitmap(button->width-1, button->height);
     
     /* Defino el nuevo buffer o target */
     al_set_target_bitmap(button->bitmap);
@@ -334,7 +339,7 @@ void create_button_bitmap(BUTTON *button){
     }
     
     /* Imprimo los bordes */
-    al_draw_rectangle(1, 0, button->width - 1, button->height - 1, button->lineColor, 1);
+    al_draw_rectangle(1, 0, button->width, button->height - 1, button->lineColor, 1);
     
     /* Imprimo el texto */
     font = al_load_ttf_font("STARWARS.TTF", 10, 0);
